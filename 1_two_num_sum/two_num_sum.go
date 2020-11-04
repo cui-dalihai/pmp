@@ -11,12 +11,15 @@ type Node struct {
 }
 type NodeList []*Node
 
+// 实现排序接口
 func (nl NodeList) Len() int           { return len(nl) }
 func (nl NodeList) Less(i, j int) bool { return nl[i].val < nl[j].val }
 func (nl NodeList) Swap(i, j int)      { nl[i], nl[j] = nl[j], nl[i] }
 
 func twoSum(nums []int, target int) []int {
 
+	// 每个slice元素转为节点类型
+	// 节点存储原始val和index
 	var nodes NodeList
 	for index, val := range nums {
 		nodes = append(nodes, &Node{index: index, val: val})
@@ -24,11 +27,14 @@ func twoSum(nums []int, target int) []int {
 	if nodes == nil {
 		return nil
 	}
+
+	// 对节点按照val进行排序
 	sort.Sort(nodes)
 
 	start := 0
 	end := len(nodes) - 1
 
+	// 使用双游标查找目标
 	for start < end {
 		if nodes[start].val+nodes[end].val == target {
 			return []int{nodes[start].index, nodes[end].index}
@@ -44,7 +50,7 @@ func twoSum(nums []int, target int) []int {
 			end--
 		}
 	}
-	return []int{}
+	return nil
 }
 
 func main() {
