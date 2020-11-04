@@ -6,14 +6,11 @@ func mergeSort(alist []int) []int {
 	if len(alist) > 1 {
 		mid := len(alist) / 2
 
-		lh := alist[:mid]
-		rh := alist[mid:]
-
-		ll := mergeSort(lh)
-		rr := mergeSort(rh)
+		ll := mergeSort(alist[:mid])
+		rr := mergeSort(alist[mid:])
 
 		var i, j, k int
-		r := make([]int, len(lh)+len(rh))
+		r := make([]int, len(ll)+len(rr))
 
 		for i < len(ll) && j < len(rr) {
 			if ll[i] < rr[j] {
