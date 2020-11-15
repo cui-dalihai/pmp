@@ -12,6 +12,7 @@ func mergeSort(alist []int) []int {
 		var i, j, k int
 		r := make([]int, len(ll)+len(rr))
 
+		// 归并
 		for i < len(ll) && j < len(rr) {
 			if ll[i] < rr[j] {
 				r[k] = ll[i]
