@@ -87,12 +87,45 @@ func CoinChangeBottomUp(coins []int, amount int) int {
 	return mem[amount]
 }
 
+func CoinChangeBottomUpWithSolu(coins []int, amount int) (int, []int) {
+	var mem = make([]int, amount+1)
+	var solu = make(map[int][]int)
+
+	for j := 1; j <= amount; j++ {
+
+		min := -1
+		var subSolu []int
+		for _, c := range coins {
+			if c > j {
+				continue
+			}
+			if mem[j-c] == -1 {
+				continue
+			}
+
+			subMin := mem[j-c] + 1
+			if min == -1 {
+				subSolu = append(solu[j-c], c)
+				min = subMin
+			} else {
+				if min > subMin {
+					subSolu = append(solu[j-c], c)
+					min = subMin
+				}
+			}
+		}
+		solu[j] = subSolu
+		mem[j] = min
+	}
+	return mem[amount], solu[amount]
+}
+
 func main() {
 
-	cs := []int{2, 4, 5, 10}
-	am := 11
+	cs := []int{1}
+	am := 2
 	//fmt.Println(CoinChange(cs, am))
-	fmt.Println(CoinChangeBottomUp(cs, am))
+	fmt.Println(CoinChangeBottomUpWithSolu(cs, am))
 	//
 	//fmt.Println(0/1)
 	//fmt.Println(6249%419)
