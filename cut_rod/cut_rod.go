@@ -166,6 +166,33 @@ func CutRodBottomUpWithSolu(n int) (int, []int) {
 	return mem[n], solu[n]
 }
 
+// 另一种返回切割方案的解法
+func CutRodBottomUpWithSoluArr(amount int) (int, []int) {
+	var mem = make([]int, amount+1)
+	var solus = make([]int, amount+1)
+
+	for j := 1; j <= amount; j++ {
+		max := 0
+		for i := 1; i <= j; i++ {
+			subr := mem[j-i] + P[i]
+			if max < subr {
+				// solus中仅存储j规模下, 最大收益切割方案中第一段的切割长度
+				solus[j] = i
+				max = subr
+			}
+		}
+		mem[j] = max
+	}
+	r := mem[amount]
+	s := []int{}
+	// 这个for循环相当于在每种长度下使用最优切割方案
+	for amount > 0 {
+		s = append(s, solus[amount])
+		amount -= solus[amount]
+	}
+	return r, s
+}
+
 func main() {
-	fmt.Println(CutRodBottomUpWithSolu(15))
+	fmt.Println(CutRodBottomUpWithSoluArr(15))
 }

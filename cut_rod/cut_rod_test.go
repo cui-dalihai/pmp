@@ -82,3 +82,24 @@ func TestCutRodBottomUpWithSolu(t *testing.T) {
 		}
 	}
 }
+
+func TestCutRodBottomUpWithSoluArr(t *testing.T) {
+	var tests = []struct {
+		input int
+		maxv  int
+		solu  []int
+	}{
+		{0, 0, []int{}},
+		{1, 1, []int{1}},
+		{6, 17, []int{6}},
+		{7, 18, []int{1, 6}},
+		{9, 25, []int{3, 6}},
+		{10, 30, []int{10}},
+		{15, 43, []int{2, 3, 10}},
+	}
+	for _, test := range tests {
+		if gotr, gots := CutRodBottomUpWithSoluArr(test.input); gotr != test.maxv || !sliceEqual(gots, test.solu) {
+			t.Errorf("CutRodBottomUpWithSoluArr(%v) = %v, %v, expect: %v, %v\n", test.input, gotr, gots, test.maxv, test.solu)
+		}
+	}
+}
