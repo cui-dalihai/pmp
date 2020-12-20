@@ -1,8 +1,6 @@
 package main
 
-import (
-	"fmt"
-)
+import "fmt"
 
 // 长度:价格 表
 // 求n长度时切割(切割可以为0)的最高价格
@@ -146,6 +144,7 @@ func CutRodBottomUp(n int) int {
 func CutRodBottomUpWithSolu(n int) (int, []int) {
 	var mem = make([]int, n+1)
 	var solu = make(map[int][]int)
+	solu[0] = []int{}
 
 	for j := 1; j <= n; j++ {
 
