@@ -47,11 +47,52 @@ func CoinChange(coins []int, amount int) int {
 	return memFunc(coins, amount)
 }
 
+func CoinChangeBottomUp(coins []int, amount int) int {
+	var mem = make([]int, amount+1)
+
+	// 对问题规模升序求解
+	for j := 1; j <= amount; j++ {
+
+		// 约定无法兑换时返回-1
+		min := -1
+
+		// 遍历每个规模为j的问题的子问题
+		for _, c := range coins {
+
+			// 跳过比规模还大的硬币
+			if c > j {
+				continue
+			}
+
+			// 跳过无法兑换的子问题
+			if mem[j-c] == -1 {
+				continue
+			}
+
+			subMin := mem[j-c] + 1
+			// 首次检查子问题
+			if min == -1 {
+				min = subMin
+			} else {
+
+				// 保存最小硬币数
+				if min > subMin {
+					min = subMin
+				}
+			}
+		}
+		// 保存j规模问题的解
+		mem[j] = min
+	}
+	return mem[amount]
+}
+
 func main() {
 
-	cs := []int{83, 186, 408, 419}
-	am := 6249
-	fmt.Println(CoinChange(cs, am))
+	cs := []int{2, 4, 5, 10}
+	am := 11
+	//fmt.Println(CoinChange(cs, am))
+	fmt.Println(CoinChangeBottomUp(cs, am))
 	//
 	//fmt.Println(0/1)
 	//fmt.Println(6249%419)
