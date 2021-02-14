@@ -191,6 +191,30 @@ func heapInsert(nums *[]int, key int) {
 	heapIncreaseKey(*nums, len(*nums)-1, key)
 }
 
+// heapDelete 删除一个key, 把这个key增大到无穷大, 保证会浮到堆首, 然后取出最大元素
+// 时间复杂度: O(lgn)
+func heapDelete(nums *[]int, i int) {
+	l := len(*nums)
+	if i >= l || i < 0 {
+		panic("invalid index.")
+	}
+	heapIncreaseKey(*nums, i, math.MaxInt64)
+	heapExtractMax(nums)
+}
+
+// heapDelete1 删除一个key的另一个方法, 把这个key置为堆尾元素大小, 并对这个位置heapify
+// 这时就相当于把最后一个元素替换到i位置进行heapify, 再删除后面那个元素即可
+func heapDelete1(nums *[]int, i int) {
+	l := len(*nums)
+	if (*nums)[i] > (*nums)[l-1] {
+		(*nums)[i] = (*nums)[l-1]
+		maxHeapifyRecursive(*nums, i)
+	} else {
+		heapIncreaseKey(*nums, i, (*nums)[l-1])
+	}
+	*nums = (*nums)[:l-2]
+}
+
 func main() {
 
 	nums := []int{23, 17, 14, 6, 13, 10, 1, 5, 7, 12}
@@ -237,4 +261,12 @@ func main() {
 	heapInsert(&nums, 11)
 	fmt.Println(nums)
 	fmt.Println(isMaxHeap(nums))
+
+	fmt.Println("delete key")
+	nums = []int{15, 7, 9, 1, 2, 3, 8}
+	fmt.Println(nums)
+	fmt.Println(isMaxHeap(nums))
+	heapDelete1(&nums, 4)
+	fmt.Println(isMaxHeap(nums))
+	fmt.Println(nums)
 }
