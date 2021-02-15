@@ -41,65 +41,63 @@ func nthUglyNumber1(n int) int {
 	}
 }
 
-type heap struct {
-	nums *[]int
-}
+type heap []int
 
 func (h heap) heapifyMin(i int) {
 
-	length := len(*h.nums)
-	if length <= 1 {
-		return
-	}
-	l := (i + 1) << 1
-	r := (i+1)<<1 + 1
-
+	length := len(h)
 	var smallest int
-	if l <= length && (*h.nums)[i] > (*h.nums)[l-1] {
-		smallest = l - 1
-	} else {
-		smallest = i
-	}
 
-	if r <= length && (*h.nums)[smallest] > (*h.nums)[r-1] {
-		smallest = r - 1
-	}
+	for {
+		l := (i + 1) << 1
+		r := (i+1)<<1 + 1
 
-	if smallest != i {
-		(*h.nums)[smallest], (*h.nums)[i] = (*h.nums)[i], (*h.nums)[smallest]
-		h.heapifyMin(smallest)
-	}
+		if l <= length && h[i] > h[l-1] {
+			smallest = l - 1
+		} else {
+			smallest = i
+		}
 
+		if r <= length && h[smallest] > h[r-1] {
+			smallest = r - 1
+		}
+		if i != smallest {
+			h[smallest], h[i] = h[i], h[smallest]
+			i = smallest
+			continue
+		}
+		break
+	}
 }
 func (h heap) decreaseKey(i, k int) {
 
-	if (*h.nums)[i] < k {
+	if h[i] < k {
 		panic("key in place is smaller.")
 	}
-	(*h.nums)[i] = k
+	h[i] = k
 	p := (i+1)>>1 - 1
-	for p >= 0 && (*h.nums)[p] > (*h.nums)[i] {
-		(*h.nums)[p], (*h.nums)[i] = (*h.nums)[i], (*h.nums)[p]
+	for p >= 0 && h[p] > h[i] {
+		h[p], h[i] = h[i], h[p]
 		i = p
 		p = (i+1)>>1 - 1
 	}
 }
-func (h heap) insert(num int) {
-	*h.nums = append(*h.nums, math.MaxInt64)
-	h.decreaseKey(len(*h.nums)-1, num)
+func (h *heap) insert(num int) {
+	*h = append(*h, math.MaxInt64)
+	h.decreaseKey(len(*h)-1, num)
 }
-func (h heap) extractMin() int {
-	r := (*h.nums)[0]
-	(*h.nums)[0] = (*h.nums)[len(*h.nums)-1]
+func (h *heap) extractMin() int {
+	r := (*h)[0]
+	(*h)[0] = (*h)[len(*h)-1]
 	h.heapifyMin(0)
-	*h.nums = (*h.nums)[:len(*h.nums)-1]
+	*h = (*h)[:len(*h)-1]
 	return r
 }
 
 func nthUglyNumber(n int) int {
 
 	nums := make([]int, n)
-	H := heap{nums: &[]int{1}}
+	H := heap{1}
 
 	i := 0
 	for i < n {
