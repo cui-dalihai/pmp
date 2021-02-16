@@ -26,7 +26,7 @@ import (
 	a. 要求更低, 仅要求父节点大于等于子节点
 	b. 除了最底层, 二叉堆的树是充满的, 所以高 h 的二叉堆, 至少 2^h 个元素, 最多 2^(h+1) - 1个元素, 反过来 n 个元素的堆, 树高是 lgn
 
-4. 对于已经降序排序的数组, 就是大堆, 因为满足堆属性, 反之则不然, 因为对属性不要求两个子节点的相对大小
+4. 对于已经降序排序的数组, 就是大堆, 因为满足堆属性, 反之则不然, 因为堆属性不要求两个子节点的相对大小
 
 5. 推导属性:
 	a. 对于n个元素的堆, 下标n>>1+1...n都是叶子节点, 注意叶子节点不一定都出现在最后一层, 也可能是倒数第二层
@@ -36,6 +36,7 @@ import (
 	b. extract-max:	取出最大优先元素, 把堆首返回, 把堆尾放堆首, heapify堆首 O(lgn)
 	c. increase-key: 增大某个元素优先, 不断与i>>2元素即父元素对比, 交换 O(lgn)
 	d. insert: 插入新元素, 追加一个无穷小元素到堆尾, 再增大这个元素到key大小 O(lgn)
+	e. delete: 删除元素, 把要删除的元素key置为堆尾元素, heapify这个元素, 删除堆尾元素 O(lgn)
 	总之, n个元素的堆中, 所有优先队列的操作的时间复杂度都是O(lgn)
 
 */
@@ -63,7 +64,7 @@ func isMaxHeap(nums []int) (bool, int) {
 	return true, -1
 }
 
-// maxHeapifyRecursive 是从当前节点向下调整, 使当前节点下的节点满足堆属性
+// maxHeapifyRecursive 函数调用的前提假设是i的左右子树是大堆, heapify会把i移动到合适的位置让整个堆不违反堆属性
 // 时间复杂度: O(lgn), 即O(h)
 func maxHeapifyRecursive(nums []int, i int) {
 
@@ -128,6 +129,7 @@ func maxHeapifyLoop(nums []int, i int) {
 // 第一次循环是构建一层堆的过程, 因为第一次的i=l>>1, 有且仅有一层孩子
 // 这样, 在i从l>>1依次向0递减时, 一直维护着如下的循环不变量:
 // i+1, i+2 ... n 这些节点都是一个大堆的根
+// 而heapify的前提假设就是i的左右子树都是大堆, 所以应该是i从l>>1向0递减的方向来调用heapify
 // 时间复杂度: O(nlgn)
 func buildHeap(nums []int) {
 	l := len(nums)
@@ -152,7 +154,8 @@ func heapSort(nums []int) {
 }
 
 // heapExtractMax 取出heap的最大元素, 就是把第一个元素取出, 然后把最后一个元素放到首个元素位置
-// 并对第一个位置heapify, 然后再把数组最后一个元素去掉
+// 并对第一个位置heapify, 此时第一个位置的左右子树是满足heapify调用前提的, 即左右子树是大堆
+// 然后再把数组最后一个元素去掉
 // 时间复杂度: O(lgn)
 func heapExtractMax(nums *[]int) int {
 	fmt.Printf("inside func: %p\n", &(*nums))
@@ -163,8 +166,7 @@ func heapExtractMax(nums *[]int) int {
 	max := (*nums)[0]
 	(*nums)[0] = (*nums)[l-1]
 	maxHeapifyRecursive(*nums, 0)
-	n := (*nums)[:l-1]
-	*nums = n
+	*nums = (*nums)[:l-1]
 	return max
 }
 
@@ -203,7 +205,8 @@ func heapDelete(nums *[]int, i int) {
 }
 
 // heapDelete1 删除一个key的另一个方法, 把这个key置为堆尾元素大小, 并对这个位置heapify
-// 这时就相当于把最后一个元素替换到i位置进行heapify, 再删除后面那个元素即可
+// 这时就相当于把最后一个元素替换到i位置进行heapify, 再删除后面那个元素即可, 相比前者少一次lgn
+// 时间复杂度: O(lgn)
 func heapDelete1(nums *[]int, i int) {
 	l := len(*nums)
 	if (*nums)[i] > (*nums)[l-1] {
